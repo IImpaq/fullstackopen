@@ -1,0 +1,26 @@
+title Exercise 0.6: New note
+
+note over browser:
+Submitting the form when the "Save"
+button is clicked and sending the 
+new note to the server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over server:
+The server responds with the status 201 (created),
+it indicates that the request has succeeded. This
+time it doesn't cause the page being reloaded/
+redirected. In comparision to Exercise 0.4 where 
+the status was 302 (found) and a 
+"location" ("/exampleapp/notes") was defined in 
+the response header.
+end note
+
+server-->browser: HTTP Status 201
+
+note over browser:
+Browser executing the event handler
+that renders notes to display
+end note
