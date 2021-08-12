@@ -15,6 +15,15 @@ const Button = ({handleClick, text}) => {
   );
 }
 
+const Section = ({title, anecdote}) => {
+  return (
+    <>
+      <h1>{title}</h1>
+      <Anecdote current={anecdote} />
+    </>
+  );
+}
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -52,6 +61,7 @@ const App = () => {
   }
 
   const [selected, setSelected] = useState(randomIndex());
+  const [highestIndex, setHighestIndex] = useState(selected);
 
   const addVote = () => () => {
     const temp = [...anecdotes];
@@ -59,12 +69,22 @@ const App = () => {
       text: anecdotes[selected].text,
       votes: anecdotes[selected].votes + 1
     };
+
+    for(let i = 0; i < temp.length; ++i) {
+      if(temp[i].votes > temp[highestIndex].votes) {
+        setHighestIndex(i);
+      }
+    } 
+
     setAnecdotes(temp);
   }
 
   return (
     <div>
-      <Anecdote current={anecdotes[selected]} />
+      <Section 
+        title="Anecdote of the day"
+        anecdote={anecdotes[selected]}
+      />
       <Button 
         handleClick={addVote()}
         text="vote"
@@ -72,6 +92,10 @@ const App = () => {
       <Button 
         handleClick={() => setSelected(randomIndex())}
         text="next anecdote"
+      />
+      <Section 
+        title="Anecdote with most votes"
+        anecdote={anecdotes[highestIndex]}
       />
     </div>
   );
