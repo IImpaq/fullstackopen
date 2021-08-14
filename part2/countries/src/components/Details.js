@@ -25,7 +25,11 @@ const Details = ({country}) => {
       <h2>weather in {country.capital}</h2>
       <p>
         <strong>temperature: </strong>{weather.main.temp}°C<br/>
-        <strong>wind: </strong>{weather.wind.speed} m/s {weather.wind.deg}°
+        <strong>wind: </strong>{weather.wind.speed} m/s {weather.wind.deg}°<br/>
+        <strong>weather data provided by <a href="https://www.openweathermap.org" 
+                                            target="_blank" 
+                                            rel="noreferrer noopener">openweathermap</a>
+        </strong>
       </p>
     </>
   };
