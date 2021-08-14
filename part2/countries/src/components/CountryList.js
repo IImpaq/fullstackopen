@@ -1,4 +1,6 @@
 import React from "react"
+import Country from "./Country"
+import Details from "./Details"
 
 const CountryList = ({countries, filter}) => {
   const filteredCountries = 
@@ -7,39 +9,19 @@ const CountryList = ({countries, filter}) => {
       : countries.filter(
           country => country.name.toLowerCase().includes(filter.toLowerCase()));
 
-  if(filteredCountries.length > 10) {
-    return (
-      <div>Too many matches, specify another filter</div>
-    );
+  if(filteredCountries.length === 1) {
+    return <Details country={ filteredCountries[0]} />
   }
 
-  if(filteredCountries.length === 1) {
-    const country = filteredCountries[0];
-    return (
-      <div>
-        <h1>{country.name}</h1>
-        <p>
-          capital: {country.capital}<br/>
-          population: {country.population}
-        </p>
-        <h2>languages</h2>
-        <ul>
-           {
-            country.languages.map(language =>
-              <li key={language.iso639_2}>{language.name}</li>
-            )
-           }
-        </ul>
-        <img src={country.flag} width="100rem" alt="flag" />
-      </div>
-    );
+  if(filteredCountries.length > 10) {
+    return <div>Too many matches, specify another filter</div>
   }
 
   return (
     <div>
     {
       filteredCountries.map(country =>
-        <div key={country.numericCode}>{country.name}</div>
+        <Country key={country.numericCode} country={country} />
       )
     }
     </div>
