@@ -18,8 +18,6 @@ const App = () => {
       }); 
   }, []);
 
-  console.log("rendering countries", countries.length);
-
   const handleFilter = (event) => {
     setFilter(event.target.value);
   };
