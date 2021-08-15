@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react"
 import EntryForm from "./components/EntryForm"
 import EntryList from "./components/EntryList"
 import Filter from "./components/Filter"
+import Notification from "./components/Notification"
 import personService from "./services/persons"
 
 const App = () => {
@@ -9,6 +10,16 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [notMessage, setNotMessage] = useState(null);
+  const [notError, setNotError] = useState(false);
+
+  const notify = (message, error) => {
+    setNotMessage(message);
+    setNotError(error);
+    setTimeout(() => {
+      setNotMessage(null);
+    }, 5000);
+  };
 
   useEffect(() => {
     personService.getAll()
@@ -17,6 +28,7 @@ const App = () => {
       })
       .catch(error => {
         console.log(error);
+        notify("Loading the phonebook failed, check console for details!", true);
       });
   }, []);
 
@@ -36,7 +48,7 @@ const App = () => {
     event.preventDefault();
 
     if(newName === "" || newNumber === "") {
-      alert("Specify a name and a number please");
+      notify("Specify a name and a number please!", true);
       return;
     }
 
@@ -54,13 +66,17 @@ const App = () => {
 
     personService.add(newPerson)
     .then(response => {
+      notify(`Added ${response.name} to the phonebook!`, false);
       setPersons(persons.concat(response));
+    })
+    .catch(error => {
+      console.log(error);
+      notify(`Adding ${newName} to the phonebook failed, check console for details!`, true);
     });
   };
 
   const updatePerson = (personToUpdate) => {
     if(!window.confirm(`${personToUpdate.name} is already added in the phonebook, replace the old number with a new one?`)) {
-      console.log("canceled updating number of person", personToUpdate.id);
       return;
     }
 
@@ -69,10 +85,12 @@ const App = () => {
     personService
       .update(newPerson)
       .then(response => {
-        setPersons(persons.map(person => person.id !== personToUpdate.id ? person : response));
+        notify(`Changed ${response.name}'s number from ${personToUpdate.number} to ${response.number}!`, false);
+        setPersons(persons.map(person => person.id !== response.id ? person : response));
       })
       .catch(error => {
         console.log(error);
+        notify(`Updating ${newPerson.name} in the phonebook failed, check console for details!`, true);
       });
   };
 
@@ -84,16 +102,19 @@ const App = () => {
     personService
         .remove(personToDelete.id)
         .then(response => {
-            console.log(`deleted person ${response}`);
-            setPersons(persons.filter(person => person.id !== personToDelete.id));
+            notify(`Deleted ${response.name} from the phonebook!`, false);
+            setPersons(persons.filter(person => person.id !== response.id));
+
         })
         .catch(error => {
             console.log(error);
+            notify(`Deleting ${personToDelete.name} from the phonebook failed, check console for details!`, true);
         })
   };
 
   return (
     <div>
+      <Notification message={notMessage} error={notError} />
       <h2>Phonebook</h2>
       <Filter value={filter} handleChange={handleFilter}/>
       <h2>Add new entry</h2>
