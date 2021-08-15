@@ -57,6 +57,25 @@ const App = () => {
     });
   };
 
+  const deletePerson = (personToDelete) => () => {
+    if(!window.confirm(`Are you sure you want to delete ${personToDelete.name}`)) {
+      console.log("canceled deletion of person", personToDelete.id);
+      return;
+    }
+
+    console.log("deleting", personToDelete.id);
+
+    personService
+        .remove(personToDelete.id)
+        .then(response => {
+            console.log(`deleted person ${response}`);
+            setPersons(persons.filter(person => person.id !== personToDelete.id));
+        })
+        .catch(error => {
+            console.log(error);
+        })
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -68,7 +87,7 @@ const App = () => {
         handleClick={addPerson}  
       />
       <h2>Numbers</h2>
-      <EntryList persons={persons} filter={filter} />
+      <EntryList persons={persons} filter={filter} handleClick={deletePerson} />
     </div>
   );
 };
