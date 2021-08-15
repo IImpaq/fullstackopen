@@ -102,13 +102,17 @@ const App = () => {
     personService
         .remove(personToDelete.id)
         .then(response => {
-            notify(`Deleted ${response.name} from the phonebook!`, false);
-            setPersons(persons.filter(person => person.id !== response.id));
-
+            notify(`Deleted ${personToDelete.name} from the phonebook!`, false);
+            setPersons(persons.filter(person => person.id !== personToDelete.id));
         })
         .catch(error => {
-            console.log(error);
-            notify(`Deleting ${personToDelete.name} from the phonebook failed, check console for details!`, true);
+            if(error.response.status === 404) {
+              notify(`${personToDelete.name} was already deleted from the phonebook!`, true);
+              setPersons(persons.filter(person => person.id !== personToDelete.id));
+            } else {
+              console.log(error);
+              notify(`Deleting ${personToDelete.name} from the phonebook failed, check console for details!`, true);
+            }
         })
   };
 
