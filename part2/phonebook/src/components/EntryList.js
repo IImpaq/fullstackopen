@@ -1,6 +1,6 @@
 import React from "react"
 
-const EntryList = ({persons, filter}) => {
+const EntryList = ({persons, filter, handleClick}) => {
   const personsToShow = 
     filter === "" ? persons
       : persons.filter(person => 
@@ -9,8 +9,11 @@ const EntryList = ({persons, filter}) => {
   return (
     <ul>
     {
-      personsToShow.map(person => 
-        <li key={person.name}>{person.name}: {person.number}</li>  
+      personsToShow.map(person =>
+        <li key={person.id}>
+          {person.name}: {person.number}
+          <button onClick={handleClick(person)}>delete</button>
+        </li>  
       )
     }
     </ul>
