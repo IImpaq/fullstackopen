@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 
+app.use(express.json());
+
 let persons = [
     { 
       "id": 1,
@@ -24,6 +26,21 @@ let persons = [
     }
 ]
 
+const randomID = (shouldVerify) => {
+    let id = Math.floor(Math.random() * 9999);
+    
+    if(!shouldVerify) {
+        return id;
+    } else {
+        let result = persons.find(person => person.id === id);
+        if(!result) {
+            return id;
+        } else {
+            return randomID(shouldVerify);
+        }
+    }
+}
+
 app.get("/info", (request, response) => {
     let count = persons.length;
     let time = new Date().toString();
@@ -44,6 +61,26 @@ app.get("/api/persons/:id", (request, response) => {
         response.status(404).end();
     }
 });
+
+app.post("/api/persons", (request, response) => {
+    let body = request.body;
+
+    if(!body.name || !body.number) {
+        return response.status(400).json({
+            error: "name or number missing"
+        });
+    }
+
+    let person = {
+        id: randomID(true),
+        name: body.name,
+        number: body.number
+    };
+
+    persons = persons.concat(person);
+
+    response.json(person);
+})
 
 app.delete("/api/persons/:id", (request, response) => {
     let id = Number(request.params.id);
