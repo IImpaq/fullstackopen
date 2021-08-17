@@ -38,14 +38,21 @@ app.get("/api/persons/:id", (request, response) => {
     let id = Number(request.params.id);
     let person = persons.find(person => person.id === id);
 
-    console.log("alwys:", person);
-    console.log("type:", typeof(person));
-
     if(person) {
         response.json(person);
-        console.log("response");
     } else {
-        console.log("404");
+        response.status(404).end();
+    }
+});
+
+app.delete("/api/persons/:id", (request, response) => {
+    let id = Number(request.params.id);
+    let person = persons.find(person => person.id === id);
+
+    if(person) {
+        persons = persons.filter(person => person.id !== id);
+        response.json(person);
+    } else {
         response.status(404).end();
     }
 });
