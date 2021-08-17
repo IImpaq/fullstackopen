@@ -24,6 +24,12 @@ let persons = [
     }
 ]
 
+app.get("/info", (request, response) => {
+    let count = persons.length;
+    let time = new Date().toString();
+    response.send(`<p>Phonebook has info of ${count} people<br/>${time}</p>`);
+});
+
 app.get("/api/persons", (request, response) => {
     response.json(persons);
 });
