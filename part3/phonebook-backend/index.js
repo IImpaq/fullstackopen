@@ -71,6 +71,12 @@ app.post("/api/persons", (request, response) => {
         });
     }
 
+    if(persons.find(person => person.name === body.name)) {
+        return response.status(409).json({
+            error: "name must be unique"
+        });
+    }
+
     let person = {
         id: randomID(true),
         name: body.name,
