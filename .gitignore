@@ -69,3 +69,6 @@ sketch
 ### PART 3 ###
 # Phonebook frontend build directory
 part3/phonebook-frontend/build/
+
+# Phonebook backend env variables
+part3/phonebook-backend/.env
