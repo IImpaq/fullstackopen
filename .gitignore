@@ -65,3 +65,7 @@ sketch
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,react
+
+### PART 3 ###
+# Phonebook frontend build directory
+part3/phonebook-frontend/build/
