@@ -10,7 +10,7 @@ if [ "$answer" != "${answer#[Yy]}" ] ;then
   echo "Moving to frontend directory: $(pwd)"
   npm run build
   echo "Built frontend website for deployment"
-  cp -r ./build/ ../phonebook-backend/
+  cp -r ./build ../phonebook-backend
   echo "Copying build directory to backend $(pwd)/../phonebook-backend/"
   cd ../../
   echo "Moving to root of repository: $(pwd)"
