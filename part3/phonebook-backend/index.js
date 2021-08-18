@@ -64,19 +64,14 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  if(persons.find(person => person.name === body.name)) {
-    return response.status(409).json({
-      error: "name must be unique"
-    });
-  }
-
-  let person = {
-    id: randomID(true),
+  const person = new Person({
     name: body.name,
     number: body.number
-  };
+  });
 
-  persons = persons.concat(person);
+  person.save().then(result => {
+    console.log(`added ${result.name} with number ${result.number} to the phonebook`);
+  });
 
   response.json(person);
 });
