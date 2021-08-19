@@ -7,34 +7,11 @@ const app = express();
 const Person = require("./models/person");
 
 app.use(cors());
-app.use(express.json());
 app.use(express.static("build"));
+app.use(express.json());
 
 morgan.token("person", (request, response) => JSON.stringify(request.body));
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :person"));
-
-let persons = [
-  { 
-    "id": 1,
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": 2,
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": 3,
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": 4,
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-]
 
 app.get("/info", (request, response) => {
   let time = new Date().toString();
@@ -77,15 +54,9 @@ app.post("/api/persons", (request, response) => {
 });
 
 app.delete("/api/persons/:id", (request, response) => {
-  let id = Number(request.params.id);
-  let person = persons.find(person => person.id === id);
-
-  if(person) {
-    persons = persons.filter(person => person.id !== id);
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.findByIdAndDelete(request.params.id).then(result => {
+    response.json(result);
+  });
 });
 
 const PORT = process.env.PORT;
