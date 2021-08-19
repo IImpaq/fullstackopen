@@ -71,7 +71,7 @@ const App = () => {
     })
     .catch(error => {
       console.log(error);
-      notify(`Adding ${newName} to the phonebook failed, check console for details!`, true);
+      notify(error.response.data.error, true);
     });
   };
 
@@ -90,7 +90,7 @@ const App = () => {
       })
       .catch(error => {
         console.log(error);
-        notify(`Updating ${newPerson.name} in the phonebook failed, check console for details!`, true);
+        notify(error.response.data.error, true);
       });
   };
 
