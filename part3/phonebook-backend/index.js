@@ -74,18 +74,13 @@ app.delete(`${url}/:id`, (request, response, next) => {
 app.put(`${url}/:id`, (request, response, next) => {
   let body = request.body;
 
-  if(!body.name || !body.number) {
-    return response.status(400).json({
-      error: "name or number missing"
-    });
-  }
-
   const personToUpdate = {
     name: body.name,
     number: body.number
   };
 
-  Person.findByIdAndUpdate(request.params.id, personToUpdate, {new: true})
+  Person.findByIdAndUpdate(request.params.id, personToUpdate, 
+                            {new: true, runValidators: true})
     .then(result => {
       response.json(result);
     }).catch(error => next(error));
