@@ -31,8 +31,11 @@ app.get(`${url}`, (request, response) => {
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
-  if(error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+  switch(error.name) {
+    case "CastError":
+      return response.status(400).send({ error: "malformatted id" });
+    case "ValidationError":
+      return response.status(400).json({ error: error.message })
   }
 
   next(error);
@@ -50,12 +53,6 @@ app.get(`${url}/:id`, (request, response, next) => {
 
 app.post(`${url}`, (request, response, next) => {
   let body = request.body;
-
-  if(!body.name || !body.number) {
-    return response.status(400).json({
-      error: "name or number missing"
-    });
-  }
 
   const person = new Person({
     name: body.name,
