@@ -74,13 +74,9 @@ app.delete(`${url}/:id`, (request, response, next) => {
 app.put(`${url}/:id`, (request, response, next) => {
   let body = request.body;
 
-  const personToUpdate = {
-    name: body.name,
-    number: body.number
-  };
+  const options = {new: true, runValidators: true};
 
-  Person.findByIdAndUpdate(request.params.id, personToUpdate, 
-                            {new: true, runValidators: true})
+  Person.findByIdAndUpdate(request.params.id, { number: body.number}, options)
     .then(result => {
       response.json(result);
     }).catch(error => next(error));
