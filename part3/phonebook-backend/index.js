@@ -20,7 +20,9 @@ app.get("/info", (request, response) => {
   });
 });
 
-app.get("/api/persons", (request, response) => {
+const url = "/api/persons";
+
+app.get(`${url}`, (request, response) => {
   Person.find({}).then(result => {
     response.json(result);
   });
@@ -36,7 +38,7 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 }
 
-app.get("/api/persons/:id", (request, response, next) => {
+app.get(`${url}/:id`, (request, response, next) => {
   Person.findById(request.params.id).then(person => {
     if(person) {
       response.json(person);
@@ -46,7 +48,7 @@ app.get("/api/persons/:id", (request, response, next) => {
   }).catch(error => next(error));
 });
 
-app.post("/api/persons", (request, response, next) => {
+app.post(`${url}`, (request, response, next) => {
   let body = request.body;
 
   if(!body.name || !body.number) {
@@ -66,13 +68,13 @@ app.post("/api/persons", (request, response, next) => {
   }).catch(error => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete(`${url}/:id`, (request, response, next) => {
   Person.findByIdAndDelete(request.params.id).then(result => {
     response.status(204).end();
   }).catch(error => next(error));
 });
 
-app.put("/api/persons/:id", (request, response, next) => {
+app.put(`${url}/:id`, (request, response, next) => {
   let body = request.body;
 
   if(!body.name || !body.number) {
