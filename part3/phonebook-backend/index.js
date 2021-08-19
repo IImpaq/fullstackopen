@@ -72,6 +72,26 @@ app.delete("/api/persons/:id", (request, response, next) => {
   }).catch(error => next(error));
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+  let body = request.body;
+
+  if(!body.name || !body.number) {
+    return response.status(400).json({
+      error: "name or number missing"
+    });
+  }
+
+  const personToUpdate = {
+    name: body.name,
+    number: body.number
+  };
+
+  Person.findByIdAndUpdate(request.params.id, personToUpdate, {new: true})
+    .then(result => {
+      response.json(result);
+    }).catch(error => next(error));
+});
+
 const unknownEndpoint = (request, response) => {
   return response.status(404).send({ error: "unknown endpoint" });
 }
