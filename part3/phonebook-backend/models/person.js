@@ -2,13 +2,14 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 
 // Retrieving the predefined url to mongodb
+// eslint-disable-next-line no-undef
 const url = process.env.MONGODB_URI;
 
 console.log(`Connecting to MongoDB: ${url}`);
 
 // Connecting to mongodb using mongoose
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
-  .then(result => {
+  .then(() => {
     console.log("Connected to MongoDB");
   }).catch(error => {
     console.log("Failed connecting to MongoDB:", error);
@@ -31,7 +32,7 @@ const personSchema = new mongoose.Schema({
 personSchema.plugin(uniqueValidator); // Plugin to verify if property is unique
 
 // Custom response when calling toJSON function
-personSchema.set('toJSON', {
+personSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;

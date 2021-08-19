@@ -1,14 +1,16 @@
-const mongoose = require("mongoose")
+/* eslint-disable no-undef */
+
+const mongoose = require("mongoose");
 
 const showInfoMessages = () => {
   console.log("Wrong number of arguments:");
   console.log("-> To list all entries, provide the following arguments: node mongo.js <password>");
   console.log("-> To add a new entry, provide the following arguments: node mongo.js <password> <name> <number>");
   process.exit(1);
-}
+};
 
 if(process.argv.length < 3) {
-    showInfoMessages();
+  showInfoMessages();
 }
 
 const password = process.argv[2];

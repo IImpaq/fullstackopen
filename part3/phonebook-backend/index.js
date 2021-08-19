@@ -11,7 +11,7 @@ app.use(express.static("build"));
 app.use(express.json());
 
 // Custom logging messages
-morgan.token("person", (request, response) => JSON.stringify(request.body));
+morgan.token("person", request => JSON.stringify(request.body));
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :person"));
 
 // Routing to information page
@@ -37,14 +37,14 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
   switch(error.name) {
-    case "CastError":
-      return response.status(400).send({ error: "malformatted id" });
-    case "ValidationError":
-      return response.status(400).json({ error: error.message })
+  case "CastError":
+    return response.status(400).send({ error: "malformatted id" });
+  case "ValidationError":
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
-}
+};
 
 // Returns a single entry of the phonebook, accessed by id
 app.get(`${url}/:id`, (request, response, next) => {
@@ -74,7 +74,7 @@ app.post(`${url}`, (request, response, next) => {
 
 // Deleting an entry in the phonebook, accessed by id
 app.delete(`${url}/:id`, (request, response, next) => {
-  Person.findByIdAndDelete(request.params.id).then(result => {
+  Person.findByIdAndDelete(request.params.id).then(() => {
     response.status(204).end();
   }).catch(error => next(error));
 });
@@ -94,13 +94,14 @@ app.put(`${url}/:id`, (request, response, next) => {
 // Returns a HTTP 404 error if the endpoint is unknown
 const unknownEndpoint = (request, response) => {
   return response.status(404).send({ error: "unknown endpoint" });
-}
+};
 app.use(unknownEndpoint);
 
 app.use(errorHandler);
 
-// Starting the server using a predefined port
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT;
+// Starting the server using a predefined port
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
