@@ -99,6 +99,15 @@ describe("favorite blog", () => {
 });
 
 describe("author with most blogs", () => {
+  test("of an empty list", () => {
+    expect(listHelper.mostBlogs(listWithoutBlogs)).toEqual(null);
+  });
+  test("of a list with a single blog", () => {
+    expect(listHelper.mostBlogs(listWithOneBlog)).toEqual({
+      author: "Michael Chan",
+      blogs: 1
+    });
+  });
   test("of list with multiple blogs", () => {
     expect(listHelper.mostBlogs(listWithMultipleBlogs)).toEqual({
       author: "Robert C. Martin",
