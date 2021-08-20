@@ -24,8 +24,9 @@ const favoriteBlog = (blogs) => {
 };
 
 const mostBlogs = (blogs) => {
-  return blogs
-    .reduce((res, cur) => {
+  return blogs.length === 0
+    ? null
+    : blogs.reduce((res, cur) => {
       // Checking if author was already found in res list
       let found = res.find(blog => blog.author === cur.author);
       // If the author was found already, add 1 to the authors blog count
