@@ -43,12 +43,15 @@ const mostLikes = (blogs) => {
   return blogs.length === 0
     ? null
     : blogs.reduce((res, cur) => {
+      // Checking if author was already found in res list
       let found = res.find(blog => blog.author === cur.author);
-
+      // If the author was found already, add likes to the authors like count
       if(found) { found.likes += cur.likes; }
-
+      // If found return the same list, because like count was already updated
+      // Otherwise add the newly found author to the res list.
       return found ? res : res.concat({ author: cur.author, likes: cur.likes });
     }, [])
+      // Return the author with the highest like count
       .reduce((last, curr) => curr.likes > last.likes ? curr : last);
 };
 
