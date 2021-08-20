@@ -35,8 +35,21 @@ const mostBlogs = (blogs) => {
       // Otherwise add the newly found author to the res list.
       return found ? res : res.concat({ author: cur.author, blogs: 1 });
     }, [])
-    // Return the author with the highest blog count
-    .reduce((last, curr) => last.blogs > curr.blogs ? last : curr);
+      // Return the author with the highest blog count
+      .reduce((last, curr) => curr.blogs > last.blogs ? curr : last);
 };
 
-module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs };
+const mostLikes = (blogs) => {
+  return blogs.length === 0
+    ? null
+    : blogs.reduce((res, cur) => {
+      let found = res.find(blog => blog.author === cur.author);
+
+      if(found) { found.likes += cur.likes; }
+
+      return found ? res : res.concat({ author: cur.author, likes: cur.likes });
+    }, [])
+      .reduce((last, curr) => curr.likes > last.likes ? curr : last);
+};
+
+module.exports = { dummy, totalLikes, favoriteBlog, mostBlogs, mostLikes };
