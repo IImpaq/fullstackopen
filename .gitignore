@@ -187,3 +187,5 @@ part3/phonebook-backend/.env
 ### PART 4 ###
 # Bloglist env variables
 part4/bloglist/.env
+# Bloglist coverage
+part4/bloglist/coverage/
