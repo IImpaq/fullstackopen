@@ -1,33 +1,44 @@
+const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 
-describe("blog api tests", () => {
-  test("the number of blogs returned by api", async () => {
-    const blogs = await api.get("/api/blogs");
-    expect(blogs.body).toHaveLength(2);
+const helper = require("../utils/test_helper");
+const Blog = require("../models/blog");
+
+beforeAll(async () => {
+  await Blog.deleteMany({});
+  await Blog.insertMany(helper.initialNotes);
+});
+
+describe("getting blog posts", () => {
+  test("and verifying the count returned by the api", async () => {
+    const blogs = await api.get("/api/blogs").expect(200);
+    expect(blogs.body).toHaveLength(helper.initialNotes.length);
   });
-  test("that the variable 'id' is defined", async () => {
-    const blogs = await api.get("/api/blogs");
+  test("and verifying that the variable 'id' exists", async () => {
+    const blogs = await api.get("/api/blogs").expect(200);
     if(blogs.body.length >= 1)
       expect(blogs.body[0].id).toBeDefined();
   });
-  test("that a post request creates a new blog post", async () => {
+});
+
+describe("adding a blog post", () => {
+  test("with a proper request body", async () => {
     const samplePost = {
       title: "Jest Blog Post",
       author: "Jest",
       url: "http://jest.local/",
       likes: 1
     };
-
-    const old_blogs = await api.get("/api/blogs");
+    const oldBlogs = await api.get("/api/blogs");
     const result = await api.post("/api/blogs").send(samplePost).expect(201);
-    const new_blogs = await api.get("/api/blogs");
+    const newBlogs = await api.get("/api/blogs");
 
     expect(result.body).toStrictEqual({ ...samplePost, id: result.body.id });
-    expect(new_blogs.body).toHaveLength(old_blogs.body.length + 1);
+    expect(newBlogs.body).toHaveLength(oldBlogs.body.length + 1);
   });
-  test("that the likes property has a default value of 0", async () => {
+  test("when the likes property is missing", async () => {
     const samplePost = {
       title: "Jest Blog Post",
       author: "Jest",
@@ -36,10 +47,38 @@ describe("blog api tests", () => {
     const result = await api.post("/api/blogs").send(samplePost).expect(201);
     expect(result.body.likes).toEqual(0);
   });
-  test("the result when title and url properties are missing", async () => {
+  test("when both the title and url property is missing", async () => {
     const samplePost = {
       author: "Jest"
     };
     await api.post("/api/blogs").send(samplePost).expect(400);
   });
+});
+
+describe("deleting a blog post", () => {
+  let firstBlogID = "";
+
+  test("with a valid id", async () => {
+    const oldBlogs = await api.get("/api/blogs");
+    firstBlogID = oldBlogs.body[0].id;
+    await api.delete(`/api/blogs/${firstBlogID}`).expect(204);
+    const newBlogs = await api.get("/api/blogs");
+    expect(newBlogs.body).toHaveLength(oldBlogs.body.length - 1);
+  });
+  test("with an invalid id", async () => {
+    const oldBlogs = await api.get("/api/blogs");
+    await api.delete(`/api/blogs/${firstBlogID}`).expect(404);
+    const newBlogs = await api.get("/api/blogs");
+    expect(newBlogs.body).toHaveLength(oldBlogs.body.length);
+  });
+  test("without an id", async () => {
+    const oldBlogs = await api.get("/api/blogs");
+    await api.delete("/api/blogs/").expect(404);
+    const newBlogs = await api.get("/api/blogs");
+    expect(newBlogs.body).toHaveLength(oldBlogs.body.length);
+  });
+});
+
+afterAll(() => {
+  mongoose.connection.close();
 });
