@@ -12,14 +12,21 @@ beforeAll(async () => {
 });
 
 describe("getting blog posts", () => {
+  let firstBlogID = "";
+
   test("and verifying the count returned by the api", async () => {
     const blogs = await api.get("/api/blogs").expect(200);
+    firstBlogID = blogs.body[0].id;
     expect(blogs.body).toHaveLength(helper.initialNotes.length);
   });
   test("and verifying that the variable 'id' exists", async () => {
     const blogs = await api.get("/api/blogs").expect(200);
     if(blogs.body.length >= 1)
       expect(blogs.body[0].id).toBeDefined();
+  });
+  test("and verifying that the response is correct", async () => {
+    const blog = await api.get(`/api/blogs/${firstBlogID}`).expect(200);
+    expect(blog.body).toStrictEqual({ ...helper.initialNotes[0], id: blog.body.id });
   });
 });
 
@@ -55,19 +62,55 @@ describe("adding a blog post", () => {
   });
 });
 
-describe("deleting a blog post", () => {
+describe("updating a blog post", () => {
   let firstBlogID = "";
 
+  test("with a valid id and all properties changed", async () => {
+    const blogs = await api.get("/api/blogs");
+    firstBlogID = blogs.body[0].id;
+    const updatedBlog = {
+      author: "Updated Author",
+      title: "Updated Title",
+      url: "http://updated-url.local",
+      likes: 100
+    };
+    const result = await api.put(`/api/blogs/${firstBlogID}`)
+      .send(updatedBlog)
+      .expect(200);
+    expect(result.body).toStrictEqual({ ...updatedBlog, id: result.body.id });
+  });
+  test("with a valid id and one property changed", async () => {
+    const blogs = await api.get("/api/blogs");
+    firstBlogID = blogs.body[0].id;
+    const updatedBlog = {
+      likes: 200
+    };
+    const result = await api.put(`/api/blogs/${firstBlogID}`)
+      .send(updatedBlog)
+      .expect(200);
+    expect(result.body).toStrictEqual({ ...result.body, likes: updatedBlog.likes });
+  });
+  test("with an invalid id", async () => {
+    firstBlogID = mongoose.Types.ObjectId();
+    const updatedBlog = {
+      likes: 200
+    };
+    await api.put(`/api/blogs/${firstBlogID}`).send(updatedBlog).expect(404);
+  });
+});
+
+describe("deleting a blog post", () => {
   test("with a valid id", async () => {
     const oldBlogs = await api.get("/api/blogs");
-    firstBlogID = oldBlogs.body[0].id;
+    const firstBlogID = oldBlogs.body[0].id;
     await api.delete(`/api/blogs/${firstBlogID}`).expect(204);
     const newBlogs = await api.get("/api/blogs");
     expect(newBlogs.body).toHaveLength(oldBlogs.body.length - 1);
   });
   test("with an invalid id", async () => {
     const oldBlogs = await api.get("/api/blogs");
-    await api.delete(`/api/blogs/${firstBlogID}`).expect(404);
+    const invalidID = mongoose.Types.ObjectId();
+    await api.delete(`/api/blogs/${invalidID}`).expect(404);
     const newBlogs = await api.get("/api/blogs");
     expect(newBlogs.body).toHaveLength(oldBlogs.body.length);
   });
