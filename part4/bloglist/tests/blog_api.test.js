@@ -35,5 +35,11 @@ describe("blog api tests", () => {
     };
     const result = await api.post("/api/blogs").send(samplePost).expect(201);
     expect(result.body.likes).toEqual(0);
-  })
+  });
+  test("the result when title and url properties are missing", async () => {
+    const samplePost = {
+      author: "Jest"
+    };
+    await api.post("/api/blogs").send(samplePost).expect(400);
+  });
 });
