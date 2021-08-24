@@ -12,4 +12,19 @@ describe("blog api tests", () => {
     if(blogs.body.length >= 1)
       expect(blogs.body[0].id).toBeDefined();
   });
+  test("that a post request creates a new blog post", async () => {
+    const samplePost = {
+      title: "Jest Blog Post",
+      author: "Jest",
+      url: "http://jest.local/",
+      likes: 1
+    };
+
+    const old_blogs = await api.get("/api/blogs");
+    const result = await api.post("/api/blogs").send(samplePost);
+    const new_blogs = await api.get("/api/blogs");
+
+    expect(result.body).toStrictEqual({ ...samplePost, id: result.body.id });
+    expect(new_blogs.body).toHaveLength(old_blogs.body.length + 1);
+  });
 });
