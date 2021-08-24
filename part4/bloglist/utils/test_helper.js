@@ -1,4 +1,4 @@
-const initialNotes = [
+const initialBlogs = [
   {
     author: "Genius",
     title: "Best book",
@@ -13,4 +13,4 @@ const initialNotes = [
   }
 ];
 
-module.exports = { initialNotes };
+module.exports = { initialBlogs };
