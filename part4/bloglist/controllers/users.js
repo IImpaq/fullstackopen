@@ -10,6 +10,11 @@ usersRouter.get("/", async (request, response) => {
 usersRouter.post("/", async (request, response) => {
   const body = request.body;
 
+  if(body.password === undefined || body.password.length < 3) {
+    response.status(400).send({ error: "invalid password" });
+    return;
+  }
+
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
@@ -20,8 +25,11 @@ usersRouter.post("/", async (request, response) => {
   });
 
   const savedUser = await user.save();
-
-  response.json(savedUser);
+  if(savedUser) {
+    response.json(savedUser);
+  } else {
+    response.status(400).end();
+  }
 });
 
 module.exports = usersRouter;
