@@ -50,9 +50,10 @@ const App = () => {
       setUser(user);
       setUsername("");
       setPassword("");
+      notify(`Welcome ${user.name}`, false);
     } catch(error) {
-      notify(error.message, true);
-      console.log(error);
+      notify("Invalid username or password", true);
+      console.error(error);
     }
   };
 
@@ -60,6 +61,7 @@ const App = () => {
     if(user !== null) {
       window.localStorage.removeItem("loggedInUser");
       blogServices.setToken(null);
+      notify(`Bye ${user.name}`, false);
       setUser(null);
     }
   };
@@ -78,14 +80,15 @@ const App = () => {
       setBlogURL("");
       notify(`Created new blog: ${newBlog.title} by ${newBlog.author}`, false);
     } catch(error) {
-      notify(error.message, false);
-      console.log(error);
+      notify("Failed creating a new blog", true);
+      console.error(error);
     }
   };
 
   if(user === null) {
     return (
       <div>
+        <Notification message={notMessage} isError={notError} />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -114,7 +117,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notMessage} error={notError} />
+      <Notification message={notMessage} isError={notError} />
       <h2>Blogs</h2>
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
