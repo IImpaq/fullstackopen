@@ -1,6 +1,6 @@
 import React from "react";
 
-const Notification = ({message, error}) => {
+const Notification = ({message, isError}) => {
   if(message === null) {
     return null;
   }
@@ -25,7 +25,7 @@ const Notification = ({message, error}) => {
     marginBottom: "10px",
   };
 
-  const style = error ? errorStyle : infoStyle;
+  const style = isError ? errorStyle : infoStyle;
 
   return (
     <div style={style}>
