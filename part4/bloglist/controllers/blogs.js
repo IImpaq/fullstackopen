@@ -1,8 +1,5 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
-const User = require("../models/user");
-const config = require("../utils/config");
-const jwt = require("jsonwebtoken");
 
 blogsRouter.get("/", async (request, response) => {
   const result = await Blog
@@ -29,13 +26,12 @@ blogsRouter.post("/", async (request, response) => {
     return;
   }
 
-  const decodedToken = jwt.verify(request.token, config.SECRET);
-  if(!decodedToken) {
+  const user = request.user;
+  if(!user) {
     return response
       .status(401)
-      .json({ error: "Invalid or missing token" });
+      .json({ error: "invalid or missing token" });
   }
-  const user = await User.findById(decodedToken.id);
 
   if (body.likes === undefined) {
     body.likes = 0;
@@ -75,13 +71,12 @@ blogsRouter.delete("/:id", async (request, response) => {
     return;
   }
 
-  const decodedToken = jwt.verify(request.token, config.SECRET);
-  if(!decodedToken) {
+  const user = request.user;
+  if(!user) {
     return response
       .status(401)
-      .json({ error: "Invalid or missing token" });
+      .json({ error: "invalid or missing token" });
   }
-  const user = await User.findById(decodedToken.id);
   const blogToDelete = await Blog.findById(id);
 
   if(user._id.toString() !== blogToDelete.user._id.toString()) {
