@@ -75,7 +75,22 @@ blogsRouter.delete("/:id", async (request, response) => {
     return;
   }
 
-  const result = await Blog.findByIdAndRemove(id);
+  const decodedToken = jwt.verify(request.token, config.SECRET);
+  if(!decodedToken) {
+    return response
+      .status(401)
+      .json({ error: "Invalid or missing token" });
+  }
+  const user = await User.findById(decodedToken.id);
+  const blogToDelete = await Blog.findById(id);
+
+  if(user._id.toString() !== blogToDelete.user._id.toString()) {
+    return response
+      .status(401)
+      .json({ error: "unauthorized request" });
+  }
+
+  const result = await Blog.remove(blogToDelete);
   response.status(204).json(result);
 });
 
