@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import blogService from "../services/blogs";
 
-const Blog = ({ blog, updateBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const [currentLikes, setCurrentLikes] = useState(blog.likes);
 
   const blogStyle = {
     paddingTop: 10,
@@ -14,6 +12,9 @@ const Blog = ({ blog, updateBlog }) => {
   };
 
   const visibleDetails = { display: showDetails ? "" : "none" };
+  const visibleForCreator = { display: currentUser === blog.user.username
+      ? ""
+      : "none" };
 
   const toggleDetails = (event) => {
     event.preventDefault();
@@ -22,12 +23,17 @@ const Blog = ({ blog, updateBlog }) => {
 
   const handleLike = (event) => {
     event.preventDefault();
-    blog.likes = blog.likes + 1;
     updateBlog(blog.id, {
-      likes: blog.likes
+      likes: blog.likes + 1
     });
-    setCurrentLikes(blog.likes);
   };
+
+  const handleDelete = (event) => {
+    event.preventDefault();
+    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      removeBlog(blog.id);
+    }
+  }
 
   return (
     <div style={blogStyle}>
@@ -37,8 +43,9 @@ const Blog = ({ blog, updateBlog }) => {
       </div>
       <div style={visibleDetails}>
         available at {blog.url}<br />
-        likes: {currentLikes} <button onClick={handleLike}>like</button><br />
-        posted by: {blog.user.name}
+        likes: {blog.likes} <button onClick={handleLike}>like</button><br />
+        posted by: {blog.user.name}<br />
+        <button style={visibleForCreator} onClick={handleDelete}>delete</button>
       </div>
     </div>
   );
