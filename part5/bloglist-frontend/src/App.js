@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
+import Toggleable from "./components/Toggleable";
 import blogServices from "./services/blogs";
 import loginServices from "./services/login"
 
@@ -122,31 +123,35 @@ const App = () => {
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
-      <h2>create new</h2>
-      <form onSubmit={handleBlogCreation}>
-        <div>
-          title: <input value={blogTitle} name="blogTitle"
-                        onChange={({target}) =>
-                          setBlogTitle(target.value)
-                        } />
-        </div>
-        <div>
-          author: <input value={blogAuthor} name="blogAuthor"
-                        onChange={({target}) =>
-                          setBlogAuthor(target.value)
-                        } />
-        </div>
-        <div>
-          url: <input value={blogURL} name="blogURL"
+      <Toggleable openText="create new blog" closeText="cancel">
+        <h2>create new</h2>
+        <form onSubmit={handleBlogCreation}>
+          <div>
+            title: <input value={blogTitle} name="blogTitle"
+                          onChange={({target}) =>
+                            setBlogTitle(target.value)
+                          } />
+          </div>
+          <div>
+            author: <input value={blogAuthor} name="blogAuthor"
+                           onChange={({target}) =>
+                             setBlogAuthor(target.value)
+                           } />
+          </div>
+          <div>
+            url: <input value={blogURL} name="blogURL"
                         onChange={({target}) =>
                           setBlogURL(target.value)
                         } />
-        </div>
-        <button type="submit">create</button>
-      </form>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+          </div>
+          <button type="submit">create</button>
+        </form>
+      </Toggleable>
+      <p>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
+      </p>
     </div>
   );
 };
