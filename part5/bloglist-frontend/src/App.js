@@ -69,7 +69,7 @@ const App = () => {
   const createBlog = async (blogToCreate) => {
     try {
       const newBlog = await blogServices.create(blogToCreate);
-      setBlogs(blogs.concat(newBlog));
+      setBlogs(blogs.concat({ ...newBlog, user }));
       notify(`Created new blog: ${newBlog.title} by ${newBlog.author}`, false);
     } catch(error) {
       notify("Failed creating a new blog", true);
