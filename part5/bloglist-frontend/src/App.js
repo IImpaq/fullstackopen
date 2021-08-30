@@ -5,6 +5,7 @@ import Notification from "./components/Notification";
 import Toggleable from "./components/Toggleable";
 import blogServices from "./services/blogs";
 import loginServices from "./services/login"
+import blogService from "./services/blogs";
 
 const App = () => {
   const [notMessage, setNotMessage] = useState(null);
@@ -76,6 +77,15 @@ const App = () => {
     }
   };
 
+  const updateBlog = async (id, blogToUpdate) => {
+    try {
+      await blogService.update(id, blogToUpdate);
+    } catch(error) {
+      console.error(error);
+      notify("Failed liking blog", true);
+    }
+  };
+
   if(user === null) {
     return (
       <div>
@@ -118,7 +128,7 @@ const App = () => {
       </Toggleable>
       <p/>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} />
       )}
     </div>
   );
