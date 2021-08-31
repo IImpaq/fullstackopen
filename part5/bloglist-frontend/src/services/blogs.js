@@ -5,9 +5,9 @@ let token = null;
 
 const setToken = newToken => {
   token = `bearer ${newToken}`;
-}
+};
 
-const getConfig = () => { return { headers: { Authorization: token } } };
+const getConfig = () => { return { headers: { Authorization: token } }; };
 
 const getAll = () => {
   const request = axios.get(baseURL);
