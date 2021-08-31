@@ -8,7 +8,7 @@ const Toggleable = (props) => {
 
   const toggleVisibility = () => {
     setVisible(!isVisible);
-  }
+  };
 
   return (
     <>

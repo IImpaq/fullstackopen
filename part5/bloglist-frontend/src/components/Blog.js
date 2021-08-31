@@ -14,8 +14,8 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
 
   const visibleDetails = { display: showDetails ? "" : "none" };
   const visibleForCreator = { display: currentUser === blog.user.username
-      ? ""
-      : "none" };
+    ? ""
+    : "none" };
 
   const toggleDetails = (event) => {
     event.preventDefault();
@@ -34,7 +34,7 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       removeBlog(blog.id);
     }
-  }
+  };
 
   return (
     <div style={blogStyle}>
@@ -57,6 +57,6 @@ Blog.propTypes = {
   updateBlog: PropTypes.func.isRequired,
   removeBlog: PropTypes.func.isRequired,
   currentUser: PropTypes.string.isRequired
-}
+};
 
 export default Blog;

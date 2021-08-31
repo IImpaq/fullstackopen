@@ -4,7 +4,7 @@ import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import Toggleable from "./components/Toggleable";
 import blogServices from "./services/blogs";
-import loginServices from "./services/login"
+import loginServices from "./services/login";
 import blogService from "./services/blogs";
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
   useEffect( () => {
     blogServices.getAll().then(blogs => {
       setBlogs(blogs);
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const App = () => {
       console.error(error);
       notify("Failed deleting blog", true);
     }
-  }
+  };
 
   if(user === null) {
     return (
@@ -145,10 +145,10 @@ const App = () => {
       <p/>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id}
-              blog={blog}
-              updateBlog={updateBlog}
-              removeBlog={removeBlog}
-              currentUser={user.username} />
+          blog={blog}
+          updateBlog={updateBlog}
+          removeBlog={removeBlog}
+          currentUser={user.username} />
       )}
     </div>
   );
