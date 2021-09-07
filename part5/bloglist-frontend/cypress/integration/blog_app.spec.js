@@ -38,4 +38,19 @@ describe("Blog app", function() {
       cy.contains(`Welcome ${user.name}`);
     });
   });
+  describe("When logged in", function() {
+    beforeEach(function() {
+      cy.login({ username: user.username, password: user.password });
+    });
+    it("a new blog can be created", function() {
+      const title = "a test blog created by cypress";
+
+      cy.contains("create new blog").click();
+      cy.get("#inputTitle").type(title);
+      cy.get("#inputAuthor").type("cypress test");
+      cy.get("#inputURL").type("cypress-test-blog.local");
+      cy.get("#buttonCreate").click();
+      cy.contains(title);
+    });
+  });
 });
