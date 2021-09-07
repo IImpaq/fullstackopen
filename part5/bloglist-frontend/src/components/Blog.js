@@ -42,7 +42,7 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
         <strong>{blog.title}</strong> by {blog.author}
         <button onClick={toggleDetails}>{showDetails ? "hide" : "view"}</button>
       </div>
-      <div style={visibleDetails}>
+      <div style={visibleDetails} className="blogDetails">
         available at {blog.url}<br />
         likes: {blog.likes} <button onClick={handleLike}>like</button><br />
         posted by: {blog.user.name}<br />
