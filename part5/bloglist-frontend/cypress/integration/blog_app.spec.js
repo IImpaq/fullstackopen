@@ -6,8 +6,8 @@ describe("Blog app", function() {
   };
   const blogUrl = "http://localhost:3000";
 
-  function createBlog(title, author, url) {
-    cy.contains("create new blog").click();
+  function createBlog(isOpen, title, author, url) {
+    if(!isOpen) { cy.contains("create new blog").click(); }
     cy.get("#inputTitle").type(title);
     cy.get("#inputAuthor").type(author);
     cy.get("#inputURL").type(url);
@@ -56,19 +56,39 @@ describe("Blog app", function() {
       cy.login({ username: user.username, password: user.password });
     });
     it("a new blog can be created", function() {
-      createBlog(
+      createBlog(false,
         "a test blog created by cypress",
         "a test blog created by cypress",
         "cypress-test-blog.local"
       );
     });
-    it("all users can like a blog", function() {
-      const title = "a popular test blog created by cypress";
-      createBlog(title,
+    it("a user can like a blog", function() {
+      createBlog(false,
+        "a popular test blog created by cypress",
         "cypress test",
         "popular-cypress-test-blog.local");
       cy.contains("view").click();
       cy.contains("like").click();
+    });
+    it("users can delete own blog", function() {
+      const title = "a popular test blog created by cypress";
+      const author = "cypress test";
+      const url = "popular-cypress-test-blog.local";
+      createBlog(false, title, author, url);
+      cy.contains("view").click();
+      cy.contains("delete").click();
+      createBlog(true, title, author, url);
+
+      const newUser = {
+        name: "admin_name",
+        username: "admin_user",
+        password: "admin_password"
+      };
+      cy.request("POST", "http://localhost:3003/api/users/", newUser);
+      cy.contains("logout").click();
+      cy.login({ username: newUser.username, password: newUser.password });
+      cy.contains("view").click();
+      cy.contains("delete").should("have.css", "display", "none");
     });
   });
 });
