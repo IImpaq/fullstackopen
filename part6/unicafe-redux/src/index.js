@@ -6,27 +6,27 @@ import counterReducer from "./reducer";
 const store = createStore(counterReducer);
 
 const App = () => {
-  const good = () => {
+  const handleClick = (type) => {
     store.dispatch({
-      type: "GOOD"
+      type: type
     });
   };
 
   return (
     <div>
-      <button onClick={good}>good</button>
-      <button>neutral</button>
-      <button>bad</button>
-      <button>reset stats</button>
+      <button onClick={() => handleClick("GOOD")}>good</button>
+      <button onClick={() => handleClick("NEUTRAL")}>neutral</button>
+      <button onClick={() => handleClick("BAD")}>bad</button>
+      <button onClick={() => handleClick("RESET")}>reset stats</button>
       <div>good {store.getState().good}</div>
-      <div>neutral</div>
-      <div>bad</div>
+      <div>neutral {store.getState().neutral}</div>
+      <div>bad {store.getState().bad}</div>
     </div>
   );
 };
 
 const renderApp = () => {
-  ReactDOM.render(<App />, document.querySelector("root"));
+  ReactDOM.render(<App />, document.getElementById("root"));
 };
 
 renderApp();

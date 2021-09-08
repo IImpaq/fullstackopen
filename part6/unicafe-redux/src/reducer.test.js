@@ -42,4 +42,13 @@ describe("unicafe reducer", () => {
     const newState = counterReducer(state, action);
     expect(newState).toEqual({ ...initialState, bad: 1 });
   });
+  test("should correctly reset", () => {
+    const state = { good: 1, neutral: 2, bad: 3};
+    const action = {
+      type: "RESET"
+    };
+    deepFreeze(state);
+    const newState = counterReducer(state, action);
+    expect(newState).toEqual(initialState);
+  });
 });
