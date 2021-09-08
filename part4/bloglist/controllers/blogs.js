@@ -48,16 +48,9 @@ blogsRouter.put("/:id", async (request, response) => {
   const id = request.params.id;
   const body = request.body;
 
-  const user = request.user;
   let blogToUpdate = await Blog.findById(id);
   if(!blogToUpdate) {
     return response.status(404).end();
-  }
-
-  if(!user || blogToUpdate.user.toString() !== user._id.toString()) {
-    return response
-      .status(401)
-      .json({ error: "invalid or missing token" });
   }
   const newBlog = { };
 
