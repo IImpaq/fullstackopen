@@ -90,5 +90,21 @@ describe("Blog app", function() {
       cy.contains("view").click();
       cy.contains("delete").should("have.css", "display", "none");
     });
+    it("blogs are sorted by likes", function() {
+      const title = "a popular test blog created by cypress";
+      const author = "cypress test";
+      const url = "popular-cypress-test-blog.local";
+      createBlog(false, title, author, url);
+      createBlog(true, title + "2", author, url);
+      cy.wait(500);
+      cy.get(".buttonView").first().click();
+      cy.get(".buttonLike").first().click();
+      cy.get(".buttonView").last().click();
+      cy.get(".buttonLike").last().click();
+      cy.wait(500);
+      cy.get(".buttonLike").last().click();
+      cy.wait(500);
+      cy.get(".blogTitle").first().contains(title + "2");
+    });
   });
 });
