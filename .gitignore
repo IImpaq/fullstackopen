@@ -189,3 +189,7 @@ part3/phonebook-backend/.env
 part4/bloglist/.env
 # Bloglist coverage
 part4/bloglist/coverage/
+
+### PART 5 ###
+# Cypress Videos
+part5/bloglist-frontend/cypress/videos/
