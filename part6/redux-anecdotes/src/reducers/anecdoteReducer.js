@@ -35,9 +35,22 @@ const reducer = (state = initialState, action) => {
       anecdote.id === id ? changedAnecdote : anecdote
     );
   }
+  case "ADD_ANECDOTE":
+    return state.concat({
+      content: action.data.content,
+      id: getId(),
+      votes: 0
+    });
   }
 
   return state;
+};
+
+export const addAnecdote = (content) => {
+  return {
+    type: "ADD_ANECDOTE",
+    data: { content }
+  };
 };
 
 export const voteFor = (id) => {
