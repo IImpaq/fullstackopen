@@ -11,15 +11,18 @@ const notificationReducer = (state = initialState, action) => {
   }
 };
 
-export const notifyWith = (notification) => {
-  return {
-    type: "NOTIFY",
-    data: { notification }
-  };
-};
-
 export const endNotification = () => {
   return { type: "END_NOTIFICATION" };
+};
+
+export const notifyWith = (notification, duration) => {
+  return dispatch => {
+    setTimeout(() => dispatch(endNotification()), duration * 1000);
+    dispatch({
+      type: "NOTIFY",
+      data: { notification }
+    });
+  };
 };
 
 export default notificationReducer;
