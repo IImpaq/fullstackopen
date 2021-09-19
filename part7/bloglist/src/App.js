@@ -4,7 +4,7 @@ import { notifyWith } from "./reducers/notificationReducer";
 import { initBlogs } from "./reducers/blogReducer";
 import {login, logout, reLogin} from "./reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
-import { Switch, Route } from "react-router-dom";
+import {Switch, Route, useRouteMatch} from "react-router-dom";
 import Blogs from "./routes/Blogs";
 import Users from "./routes/Users";
 
@@ -73,6 +73,9 @@ const App = () => {
     );
   }
 
+  const userMatch = useRouteMatch("/users/:id");
+  const userId = userMatch ? userMatch.params.id : null;
+
   return (
     <div>
       <Notification />
@@ -81,8 +84,11 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
       <Switch>
+        <Route path="/users/:id">
+          <Users id={userId} />
+        </Route>
         <Route path="/users">
-          <Users />
+          <Users id={userId} />
         </Route>
         <Route path="/">
           <Blogs user={user} />
