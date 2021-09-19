@@ -30,25 +30,27 @@ export const initBlogs = () => {
   };
 };
 
-export const createBlog = (blog) => {
+export const createBlog = (blog, user) => {
   return async dispatch => {
     const newBlog = await blogServices.create(blog);
+    console.log(newBlog);
     dispatch({
       type: "CREATE_BLOG",
-      data: newBlog
+      data: { ...newBlog, user }
     });
   };
 };
 
 export const voteFor = (blog) => {
   return async dispatch => {
-    const newBlog = await blogServices.update(blog.id, {
+    const updatedBlog = {
       ...blog,
       likes: blog.likes + 1
-    });
+    };
+    await blogServices.update(blog.id, updatedBlog);
     dispatch({
       type: "LIKE",
-      data: newBlog
+      data: updatedBlog
     });
   };
 };

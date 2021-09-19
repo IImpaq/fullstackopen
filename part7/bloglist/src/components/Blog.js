@@ -28,7 +28,6 @@ const Blog = ({ blog, currentUser }) => {
 
   const handleLike = (event) => {
     event.preventDefault();
-    console.log("like ", blog.id);
     try {
       dispatch(voteFor(blog));
       dispatch(notifyWith(`you liked '${blog.title}'`, 5));
@@ -42,7 +41,6 @@ const Blog = ({ blog, currentUser }) => {
     event.preventDefault();
 
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      console.log("delete ", blog.id);
       try {
         dispatch(deleteBlog(blog.id));
         dispatch(notifyWith("Deleted blog", 5, false));
