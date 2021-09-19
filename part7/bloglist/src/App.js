@@ -3,23 +3,22 @@ import Blog from "./components/Blog";
 import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import { notifyWith } from "./reducers/notificationReducer";
+import { initBlogs } from "./reducers/blogReducer";
 import Toggleable from "./components/Toggleable";
 import blogServices from "./services/blogs";
 import loginServices from "./services/login";
-import blogService from "./services/blogs";
-import {connect} from "react-redux";
+import {connect, useDispatch, useSelector} from "react-redux";
 
 const App = (props) => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useSelector(state => state.blogs);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
 
-  useEffect( () => {
-    blogServices.getAll().then(blogs => {
-      setBlogs(blogs);
-    });
-  }, []);
+  useEffect(() => {
+    dispatch(initBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedInUser = window.localStorage.getItem("loggedInUser");
@@ -29,10 +28,6 @@ const App = (props) => {
       blogServices.setToken(user.token);
     }
   }, []);
-
-  const notify = (message, error) => {
-    props.notifyWith(message, 5, error);
-  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -46,9 +41,9 @@ const App = (props) => {
       setUser(user);
       setUsername("");
       setPassword("");
-      notify(`Welcome ${user.name}`, false);
+      props.notifyWith(`Welcome ${user.name}`, 5, false);
     } catch(error) {
-      notify("Invalid username or password", true);
+      props.notifyWith("Invalid username or password", 5, true);
       console.error(error);
     }
   };
@@ -57,44 +52,35 @@ const App = (props) => {
     if(user !== null) {
       window.localStorage.removeItem("loggedInUser");
       blogServices.setToken(null);
-      notify(`Bye ${user.name}`, false);
+      props.notifyWith(`Bye ${user.name}`, 5, false);
       setUser(null);
-    }
-  };
-
-  const createBlog = async (blogToCreate) => {
-    try {
-      const newBlog = await blogServices.create(blogToCreate);
-      setBlogs(blogs.concat({ ...newBlog, user }));
-      notify(`Created new blog: ${newBlog.title} by ${newBlog.author}`, false);
-    } catch(error) {
-      notify("Failed creating a new blog", true);
-      console.error(error);
     }
   };
 
   const updateBlog = async (id, blogToUpdate) => {
     try {
-      await blogService.update(id, blogToUpdate);
+      console.log(id, blogToUpdate);
+      /*await blogService.update(id, blogToUpdate);
       setBlogs(blogs.map(blog => {
         return blog.id === id
           ? { ...blog, ...blogToUpdate }
           : blog;
-      }));
+      }));*/
     } catch(error) {
       console.error(error);
-      notify("Failed liking blog", true);
+      props.notifyWith("Failed liking blog", 5, true);
     }
   };
 
   const removeBlog = async (id) => {
     try {
-      await blogServices.remove(id);
-      setBlogs(blogs.filter(blog => blog.id !== id));
-      notify("Deleted blog", false);
+      console.log(id);
+      //await blogServices.remove(id);
+      //setBlogs(blogs.filter(blog => blog.id !== id));
+      props.notifyWith("Deleted blog", 5, false);
     } catch(error) {
       console.error(error);
-      notify("Failed deleting blog", true);
+      props.notifyWith("Failed deleting blog", 5, true);
     }
   };
 
@@ -136,7 +122,7 @@ const App = (props) => {
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
       <Toggleable openText="create new blog" closeText="cancel">
-        <BlogForm createBlog={createBlog} />
+        <BlogForm />
       </Toggleable>
       <p/>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>

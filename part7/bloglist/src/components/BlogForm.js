@@ -1,20 +1,29 @@
 import React, { useState } from "react";
+import {connect} from "react-redux";
+import { notifyWith } from "../reducers/notificationReducer";
+import { createBlog } from "../reducers/blogReducer";
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = (props) => {
   const [blogTitle, setBlogTitle] = useState("");
   const [blogAuthor, setBlogAuthor] = useState("");
   const [blogURL, setBlogURL] = useState("");
 
   const handleBlogCreation = (event) => {
     event.preventDefault();
-    createBlog({
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogURL
-    });
-    setBlogTitle("");
-    setBlogAuthor("");
-    setBlogURL("");
+    try {
+      props.createBlog({
+        title: blogTitle,
+        author: blogAuthor,
+        url: blogURL
+      });
+      props.notifyWith(`Created new blog: ${blogTitle} by ${blogAuthor}`, 5, false);
+      setBlogTitle("");
+      setBlogAuthor("");
+      setBlogURL("");
+    } catch(error) {
+      props.notifyWith("Failed creating a new blog", 5, true);
+      console.error(error);
+    }
   };
 
   return (
@@ -45,4 +54,10 @@ const BlogForm = ({ createBlog }) => {
   );
 };
 
-export default BlogForm;
+const mapDispatchToProps = {
+  notifyWith,
+  createBlog
+};
+
+const ConnectedBlogForm = connect(null, mapDispatchToProps)(BlogForm);
+export default ConnectedBlogForm;
