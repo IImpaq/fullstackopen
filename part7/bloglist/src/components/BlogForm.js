@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { notifyWith } from "../reducers/notificationReducer";
 import { createBlog } from "../reducers/blogReducer";
+import {Button, TextField} from "@material-ui/core";
 
 const BlogForm = (props) => {
   const user = useSelector(state => state.user);
@@ -32,24 +33,48 @@ const BlogForm = (props) => {
       <h2>create new</h2>
       <form onSubmit={handleBlogCreation}>
         <div>
-          title: <input value={blogTitle} name="blogTitle" id="inputTitle"
+          <TextField
+            label="title"
+            variant="filled"
+            type="text"
+            value={blogTitle}
+            name="blogTitle"
+            id="inputTitle"
             onChange={({target}) =>
               setBlogTitle(target.value)
             } />
         </div>
         <div>
-          author: <input value={blogAuthor} name="blogAuthor" id="inputAuthor"
+          <TextField
+            label="author"
+            variant="filled"
+            type="text"
+            value={blogAuthor}
+            name="blogAuthor"
+            id="inputAuthor"
             onChange={({target}) =>
               setBlogAuthor(target.value)
             } />
         </div>
         <div>
-          url: <input value={blogURL} name="blogURL" id="inputURL"
+          <TextField
+            label="url"
+            variant="filled"
+            type="text"
+            value={blogURL}
+            name="blogURL"
+            id="inputURL"
             onChange={({target}) =>
               setBlogURL(target.value)
             } />
         </div>
-        <button type="submit" id="buttonCreate">create</button>
+        <Button
+          variant="contained"
+          color="primary"
+          type="submit"
+          id="buttonCreate">
+          create
+        </Button>
       </form>
     </>
   );

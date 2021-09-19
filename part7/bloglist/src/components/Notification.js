@@ -1,38 +1,18 @@
 import React from "react";
 import {connect} from "react-redux";
+import {Alert} from "@material-ui/lab";
 
 const Notification = (props) => {
   if(props.message === null) {
-    return <></>;
+    return null;
   }
 
-  const infoStyle = {
-    color: "green",
-    background: "lightgray",
-    fontSize: "18px",
-    borderStyle: "solid",
-    borderRadius: "5px",
-    padding: "10px",
-    marginBottom: "10px",
-  };
-
-  const errorStyle = {
-    color: "red",
-    background: "lightgray",
-    fontSize: "18px",
-    borderStyle: "solid",
-    borderRadius: "5px",
-    padding: "10px",
-    marginBottom: "10px",
-  };
-
-  const style = props.error ? errorStyle : infoStyle;
-  const className = props.error ? "error" : "info";
+  const severity = props.error ? "error" : "success";
 
   return (
-    <div style={style} className={className}>
+    <Alert severity={severity}>
       {props.message}
-    </div>
+    </Alert>
   );
 };
 
