@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {Button} from "@material-ui/core";
 
 const Toggleable = (props) => {
   const [isVisible, setVisible] = useState(false);
@@ -13,11 +14,21 @@ const Toggleable = (props) => {
   return (
     <>
       <div style={hideWhenVisible}>
-        <button onClick={toggleVisibility}>{props.openText}</button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={toggleVisibility}>
+          {props.openText}
+        </Button>
       </div>
       <div style={showWhenVisible}>
         {props.children}
-        <button onClick={toggleVisibility}>{props.closeText}</button>
+        <Button
+          variant="contained"
+          color="default"
+          onClick={toggleVisibility}>
+          {props.closeText}
+        </Button>
       </div>
     </>
   );

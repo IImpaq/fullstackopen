@@ -1,20 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import {Divider, ListItem, ListItemText} from "@material-ui/core";
 
 const Blog = ({ blog }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5
-  };
-
   return (
-    <div style={blogStyle}>
-      <Link to={`/blogs/${blog.id}`}><strong className="blogTitle">{blog.title}</strong> by {blog.author}</Link>
-    </div>
+    <>
+      <ListItem>
+        <ListItemText><Link to={`/blogs/${blog.id}`}><strong className="blogTitle">{blog.title}</strong></Link> by {blog.author}</ListItemText>
+      </ListItem>
+      <Divider />
+    </>
   );
 };
 

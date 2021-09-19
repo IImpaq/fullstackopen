@@ -6,6 +6,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {deleteBlog, voteFor} from "../reducers/blogReducer";
 import {notifyWith} from "../reducers/notificationReducer";
 import {useHistory} from "react-router-dom";
+import {
+  Button,
+  Divider,
+  Link,
+  List,
+  ListItem,
+  ListItemText,
+  Typography
+} from "@material-ui/core";
 
 const Blogs = ({ user, id }) => {
   const blogs = useSelector(state => state.blogs);
@@ -51,11 +60,40 @@ const Blogs = ({ user, id }) => {
 
     return (
       <div>
-        <h2>{blog.title} by {blog.author}</h2>
-        <p><a href={blog.url} target="_blank" rel="noreferrer">{blog.url}</a></p>
-        likes: {blog.likes} <button onClick={handleLike} className="buttonLike">like</button><br />
-        posted by: {blog.user.name}<br />
-        <button style={visibleForCreator} onClick={handleDelete}>delete</button>
+        <Typography variant="h5">{blog.title} by {blog.author}</Typography>
+        <List>
+          <Divider />
+          <ListItem>
+            <ListItemText><Link href={blog.url} target="_blank" rel="noreferrer">{blog.url}</Link></ListItemText>
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <ListItemText>likes: {blog.likes}</ListItemText>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleLike}
+              className="buttonLike">
+              like
+            </Button>
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <ListItemText>posted by {blog.user.name}</ListItemText>
+          </ListItem>
+          <Divider />
+          <ListItem>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={visibleForCreator}
+              onClick={handleDelete}
+              className="buttonDelete">
+              delete
+            </Button>
+          </ListItem>
+        </List>
+
       </div>
     );
   }
@@ -66,10 +104,13 @@ const Blogs = ({ user, id }) => {
         <BlogForm />
       </Toggleable>
       <p/>
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id}
-          blog={blog} />
-      )}
+      <List>
+        <Divider />
+        {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+          <Blog key={blog.id}
+            blog={blog} />
+        )}
+      </List>
     </div>
   );
 };
