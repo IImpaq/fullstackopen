@@ -4,56 +4,43 @@ import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import { notifyWith } from "./reducers/notificationReducer";
 import { initBlogs } from "./reducers/blogReducer";
+import {login, logout, reLogin} from "./reducers/userReducer";
 import Toggleable from "./components/Toggleable";
-import blogServices from "./services/blogs";
-import loginServices from "./services/login";
-import {connect, useDispatch, useSelector} from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const App = (props) => {
+const App = () => {
   const blogs = useSelector(state => state.blogs);
+  const user = useSelector(state => state.user);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(reLogin());
+  }, []);
 
   useEffect(() => {
     dispatch(initBlogs());
   }, [dispatch]);
 
-  useEffect(() => {
-    const loggedInUser = window.localStorage.getItem("loggedInUser");
-    if(loggedInUser) {
-      const user = JSON.parse(loggedInUser);
-      setUser(user);
-      blogServices.setToken(user.token);
-    }
-  }, []);
-
-  const handleLogin = async (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
     console.log(`logging in with ${username} ${password}`);
     try {
-      const user = await loginServices.login({
-        username, password
-      });
-      window.localStorage.setItem("loggedInUser", JSON.stringify(user));
-      blogServices.setToken(user.token);
-      setUser(user);
+      dispatch(login(username, password));
+      dispatch(notifyWith(`Welcome ${username}`, 5, false));
       setUsername("");
       setPassword("");
-      props.notifyWith(`Welcome ${user.name}`, 5, false);
     } catch(error) {
-      props.notifyWith("Invalid username or password", 5, true);
+      dispatch(notifyWith("Invalid username or password", 5, true));
       console.error(error);
     }
   };
 
   const handleLogout = () => {
     if(user !== null) {
-      window.localStorage.removeItem("loggedInUser");
-      blogServices.setToken(null);
-      props.notifyWith(`Bye ${user.name}`, 5, false);
-      setUser(null);
+      dispatch(logout());
+      dispatch(notifyWith(`Bye ${user.name}`, 5, false));
     }
   };
 
@@ -107,9 +94,4 @@ const App = (props) => {
   );
 };
 
-const mapDispatchToProps = {
-  notifyWith
-};
-
-const ConnectedApp = connect(null, mapDispatchToProps)(App);
-export default ConnectedApp;
+export default App;
