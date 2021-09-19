@@ -76,6 +76,9 @@ const App = () => {
   const userMatch = useRouteMatch("/users/:id");
   const userId = userMatch ? userMatch.params.id : null;
 
+  const blogMatch = useRouteMatch("/blogs/:id");
+  const blogId = blogMatch ? blogMatch.params.id : null;
+
   return (
     <div>
       <Notification />
@@ -90,8 +93,11 @@ const App = () => {
         <Route path="/users">
           <Users id={userId} />
         </Route>
+        <Route path="/blogs/:id">
+          <Blogs user={user} id={blogId} />
+        </Route>
         <Route path="/">
-          <Blogs user={user} />
+          <Blogs user={user} id={blogId} />
         </Route>
       </Switch>
     </div>
