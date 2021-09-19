@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import Notification from "./components/Notification";
 import { notifyWith } from "./reducers/notificationReducer";
 import { initBlogs } from "./reducers/blogReducer";
-import {login, logout, reLogin} from "./reducers/userReducer";
+import {login, reLogin} from "./reducers/userReducer";
 import { useDispatch, useSelector } from "react-redux";
 import {Switch, Route, useRouteMatch} from "react-router-dom";
 import Blogs from "./routes/Blogs";
 import Users from "./routes/Users";
+import Nav from "./components/Nav";
 
 const App = () => {
   const user = useSelector(state => state.user);
@@ -33,13 +34,6 @@ const App = () => {
     } catch(error) {
       dispatch(notifyWith("Invalid username or password", 5, true));
       console.error(error);
-    }
-  };
-
-  const handleLogout = () => {
-    if(user !== null) {
-      dispatch(logout());
-      dispatch(notifyWith(`Bye ${user.name}`, 5, false));
     }
   };
 
@@ -81,11 +75,9 @@ const App = () => {
 
   return (
     <div>
+      <Nav user={user} />
       <Notification />
       <h2>Blogs</h2>
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>logout</button>
-      </p>
       <Switch>
         <Route path="/users/:id">
           <Users id={userId} />
