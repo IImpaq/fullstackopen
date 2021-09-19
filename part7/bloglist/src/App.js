@@ -57,33 +57,6 @@ const App = (props) => {
     }
   };
 
-  const updateBlog = async (id, blogToUpdate) => {
-    try {
-      console.log(id, blogToUpdate);
-      /*await blogService.update(id, blogToUpdate);
-      setBlogs(blogs.map(blog => {
-        return blog.id === id
-          ? { ...blog, ...blogToUpdate }
-          : blog;
-      }));*/
-    } catch(error) {
-      console.error(error);
-      props.notifyWith("Failed liking blog", 5, true);
-    }
-  };
-
-  const removeBlog = async (id) => {
-    try {
-      console.log(id);
-      //await blogServices.remove(id);
-      //setBlogs(blogs.filter(blog => blog.id !== id));
-      props.notifyWith("Deleted blog", 5, false);
-    } catch(error) {
-      console.error(error);
-      props.notifyWith("Failed deleting blog", 5, true);
-    }
-  };
-
   if(user === null) {
     return (
       <div>
@@ -128,8 +101,6 @@ const App = (props) => {
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id}
           blog={blog}
-          updateBlog={updateBlog}
-          removeBlog={removeBlog}
           currentUser={user.username} />
       )}
     </div>
