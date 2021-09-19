@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import {deleteBlog, voteFor} from "../reducers/blogReducer";
+import {notifyWith} from "../reducers/notificationReducer";
+import {useDispatch} from "react-redux";
 
-const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
+const Blog = ({ blog, currentUser }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const dispatch = useDispatch();
 
   const blogStyle = {
     paddingTop: 10,
@@ -24,15 +28,28 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
 
   const handleLike = (event) => {
     event.preventDefault();
-    updateBlog(blog.id, {
-      likes: blog.likes + 1
-    });
+    console.log("like ", blog.id);
+    try {
+      dispatch(voteFor(blog));
+      dispatch(notifyWith(`you liked '${blog.title}'`, 5));
+    } catch(error) {
+      console.error(error);
+      dispatch(notifyWith("Failed liking blog", 5, true));
+    }
   };
 
   const handleDelete = (event) => {
     event.preventDefault();
+
     if(window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
-      removeBlog(blog.id);
+      console.log("delete ", blog.id);
+      try {
+        dispatch(deleteBlog(blog.id));
+        dispatch(notifyWith("Deleted blog", 5, false));
+      } catch(error) {
+        console.error(error);
+        dispatch(notifyWith("Failed deleting blog", 5, true));
+      }
     }
   };
 
@@ -54,8 +71,6 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
   currentUser: PropTypes.string.isRequired
 };
 
