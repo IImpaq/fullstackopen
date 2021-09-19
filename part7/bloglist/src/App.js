@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
-import Blog from "./components/Blog";
-import BlogForm from "./components/BlogForm";
 import Notification from "./components/Notification";
 import { notifyWith } from "./reducers/notificationReducer";
 import { initBlogs } from "./reducers/blogReducer";
 import {login, logout, reLogin} from "./reducers/userReducer";
-import Toggleable from "./components/Toggleable";
 import { useDispatch, useSelector } from "react-redux";
+import { Switch, Route } from "react-router-dom";
+import Blogs from "./routes/Blogs";
+import Users from "./routes/Users";
 
 const App = () => {
-  const blogs = useSelector(state => state.blogs);
   const user = useSelector(state => state.user);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -81,15 +80,14 @@ const App = () => {
       <p>
         {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
-      <Toggleable openText="create new blog" closeText="cancel">
-        <BlogForm />
-      </Toggleable>
-      <p/>
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id}
-          blog={blog}
-          currentUser={user.username} />
-      )}
+      <Switch>
+        <Route path="/users">
+          <Users />
+        </Route>
+        <Route path="/">
+          <Blogs user={user} />
+        </Route>
+      </Switch>
     </div>
   );
 };
