@@ -193,3 +193,7 @@ part4/bloglist/coverage/
 ### PART 5 ###
 # Cypress Videos
 part5/bloglist-frontend/cypress/videos/
+
+### PART 8 ###
+# Bloglist env variables
+part8/library-backendr/.env
