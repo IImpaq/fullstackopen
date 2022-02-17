@@ -1,4 +1,4 @@
-const { ApolloServer, gql, UserInputError} = require("apollo-server");
+const { ApolloServer, gql, UserInputError, AuthenticationError} = require("apollo-server");
 // import necessary for playground in newer versions
 const {
   ApolloServerPluginLandingPageGraphQLPlayground
@@ -9,6 +9,7 @@ const config = require("./config");
 const mongoose = require("mongoose");
 const Author = require("./models/author");
 const Book = require("./models/book");
+const User = require("./models/user");
 
 mongoose.connect(config.MONGODB_URI, {
   useNewUrlParser: true,
@@ -34,11 +35,20 @@ const typeDefs = gql`
         genres: [String!]!
         id: ID!
     }
+    type User {
+        username: String!
+        favoriteGenre: String!
+        id: ID!
+    }
+    type Token {
+        value: String!
+    }
     type Query {
         authorCount: Int!
         bookCount: Int!
         allAuthors: [Author!]!
         allBooks(author: String, genre: String): [Book!]!
+        me: User
     }
     type Mutation {
         addBook(
@@ -51,6 +61,14 @@ const typeDefs = gql`
             name: String!
             setBornTo: Int!
         ): Author
+        createUser(
+            username: String!
+            favoriteGenre: String!
+        ): User
+        login(
+            username: String!
+            password: String!
+        ): Token
     }
 `;
 
@@ -64,13 +82,20 @@ const resolvers = {
         return Book.find({ genres: { $in: args.genre } }).populate("author");
       }
       return Book.find({}).populate("author");
+    },
+    me: (root, args, context) => {
+      return context.currentUser;
     }
   },
   Author: {
     bookCount: (root) => Book.find({ author: { $in : root } }).countDocuments()
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, { currentUser }) => {
+      if(!currentUser) {
+        throw new AuthenticationError("User not authenticated");
+      }
+
       const foundBook = await Book.findOne({ title: args.title });
 
       if(foundBook) {
@@ -117,7 +142,11 @@ const resolvers = {
 
       return newBook;
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, { currentUser }) => {
+      if(!currentUser) {
+        throw new AuthenticationError("User not authenticated");
+      }
+
       const foundAuthor = await Author.findOne({ name: args.name });
 
       if(!foundAuthor) {
@@ -136,6 +165,37 @@ const resolvers = {
       const update = { born: args.setBornTo };
       const options = { new: true, runValidators: true };
       return Author.findOneAndUpdate(filter, update, options);
+    },
+    createUser: async (root, args) => {
+      const foundUser = await User.findOne({ username: args.username });
+
+      if(foundUser) {
+        throw new UserInputError("User already exists", {
+          invalidArgs: args.username
+        });
+      }
+
+      const newUser = new User({ ...args });
+
+      return newUser.save().catch(error => {
+        throw new UserInputError(error.message, {
+          invalidArgs: args
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if(!user || args.password !== "secret") {
+        throw new UserInputError("Wrong credentials");
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id
+      }
+
+      return { value: jwt.sign(userForToken, config.SECRET) };
     }
   }
 };
@@ -143,6 +203,16 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: async ({ req }) => {
+    const auth = req ? req.headers.authorization : null;
+    if(auth && auth.toLowerCase().startsWith("bearer ")) {
+      const decodedToken = jwt.verify(
+        auth.substring(7), config.SECRET
+      );
+      const currentUser = await User.findById(decodedToken.id);
+      return { currentUser };
+    }
+  },
   plugins: [
     ApolloServerPluginLandingPageGraphQLPlayground() // enabling playground
   ]
