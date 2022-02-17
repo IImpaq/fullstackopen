@@ -71,23 +71,70 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
-      const bookAuthor = await Author.findOne({name: args.author})
-      const book = new Book({ ...args, author: bookAuthor });
+      const foundBook = await Book.findOne({ title: args.title });
+
+      if(foundBook) {
+        throw new UserInputError("Book already exists", {
+          invalidArgs: args.title
+        });
+      }
+
+      if(args.title.length < 2) {
+        throw new UserInputError("Book title too short (minLength: 2)", {
+          invalidArgs: args.title
+        });
+      }
+
+      if(args.author.length < 4) {
+        throw new UserInputError("Author name too short (minLength: 4)", {
+          invalidArgs: args.author
+        });
+      }
+
+      let foundAuthor = await Author.findOne({ name: args.author });
+
+      if(!foundAuthor) {
+        const newAuthor = new Author({ name: args.author });
+        try {
+          await newAuthor.save();
+        } catch(error) {
+          throw new UserInputError((error.message), {
+            invalidArgs: args
+          });
+        }
+        foundAuthor = await Author.findOne({ name: args.author });
+      }
+
+      const newBook = new Book({ ...args, author: foundAuthor });
 
       try {
-        await book.save();
+        await newBook.save();
       } catch(error) {
         throw new UserInputError(error.message, {
           invalidArgs: args
         });
       }
 
-      return book;
+      return newBook;
     },
-    editAuthor: (root, args) => {
-      const filter = {name: args.name};
+    editAuthor: async (root, args) => {
+      const foundAuthor = await Author.findOne({ name: args.name });
+
+      if(!foundAuthor) {
+        throw new UserInputError("Author does not exist", {
+          invalidArgs: args.name
+        });
+      }
+
+      if(args.setBornTo < 0) {
+        throw new UserInputError("Invalid birthyear number", {
+          invalidArgs: args.setBornTo
+        });
+      }
+
+      const filter = { name: args.name };
       const update = { born: args.setBornTo };
-      const options = {new: true, runValidators: true};
+      const options = { new: true, runValidators: true };
       return Author.findOneAndUpdate(filter, update, options);
     }
   }
