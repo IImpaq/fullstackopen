@@ -69,7 +69,7 @@ const Authors = ({show, isLoggedIn}) => {
           )}
         </tbody>
       </table>
-      { isLoggedIn ?
+      { isLoggedIn &&
       <form onSubmit={submit}>
         <div>
           name
@@ -89,7 +89,6 @@ const Authors = ({show, isLoggedIn}) => {
         </div>
         <button type="submit">update author</button>
     </form>
-    : <></>
     }
     </div>
   );
