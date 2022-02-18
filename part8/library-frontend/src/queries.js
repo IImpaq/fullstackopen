@@ -18,6 +18,16 @@ query {
             name
         }
         published
+        genres
+    }
+}
+`;
+
+export const ME = gql`
+query {
+    me {
+        username
+        favoriteGenre
     }
 }
 `;
@@ -60,3 +70,4 @@ mutation login($username: String!, $password: String!) {
     }
 }
 `;
+
