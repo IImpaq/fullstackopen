@@ -3,7 +3,7 @@ import Select from "react-select";
 import {useMutation, useQuery} from "@apollo/client";
 import {ALL_AUTHORS, SET_BORN} from "../queries";
 
-const Authors = (props) => {
+const Authors = ({show, isLoggedIn}) => {
   const result = useQuery(ALL_AUTHORS);
   const [options, setOptions] = useState([]);
   const [selectedName, setSelectedName] = useState(null);
@@ -28,7 +28,7 @@ const Authors = (props) => {
     setOptions(temp);
   }, [result]);
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
@@ -69,6 +69,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
+      { isLoggedIn ?
       <form onSubmit={submit}>
         <div>
           name
@@ -88,6 +89,8 @@ const Authors = (props) => {
         </div>
         <button type="submit">update author</button>
     </form>
+    : <></>
+    }
     </div>
   );
 };
