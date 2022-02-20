@@ -4,13 +4,16 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from "./components/LoginForm";
 import Recommendations from "./components/Recommendations";
-import {useApolloClient, useSubscription} from "@apollo/client";
-import {BOOK_ADDED} from "./queries";
+import {useApolloClient, useQuery, useSubscription} from "@apollo/client";
+import {ALL_AUTHORS, ALL_BOOKS, BOOK_ADDED} from "./queries";
 
 const App = () => {
   const [page, setPage] = useState("authors");
   const [token, setToken] = useState(null);
   const client = useApolloClient();
+
+  const resultAllAuthors = useQuery(ALL_AUTHORS);
+  const resultAllBooks = useQuery(ALL_BOOKS);
 
   useEffect(() => {
     const localToken = localStorage.getItem("library-user-token");
@@ -21,7 +24,12 @@ const App = () => {
 
   useSubscription(BOOK_ADDED, {
     onSubscriptionData: ({ subscriptionData }) => {
-      window.alert(subscriptionData);
+      const addedBook = subscriptionData.data.bookAdded;
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook)
+        }
+      });
     }
   })
 
@@ -49,10 +57,12 @@ const App = () => {
       <Authors
         show={page === "authors"}
         isLoggedIn={token !== null}
+        result={resultAllAuthors}
       />
 
       <Books
         show={page === "books"}
+        result={resultAllBooks}
       />
 
       <Recommendations

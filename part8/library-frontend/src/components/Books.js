@@ -1,9 +1,6 @@
 import React, {useEffect, useState} from "react"
-import {useQuery} from "@apollo/client";
-import { ALL_BOOKS } from "../queries";
 
-const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
+const Books = ({show, result}) => {
   const [allBooks, setAllBooks] = useState([]);
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [genres, setGenres] = useState([]);
@@ -35,7 +32,7 @@ const Books = (props) => {
     }
   }, [allBooks, selectedGenre]);
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 
