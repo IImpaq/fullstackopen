@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
 import Select from "react-select";
-import {useMutation, useQuery} from "@apollo/client";
+import {useMutation} from "@apollo/client";
 import {ALL_AUTHORS, SET_BORN} from "../queries";
 
-const Authors = ({show, isLoggedIn}) => {
-  const result = useQuery(ALL_AUTHORS);
+const Authors = ({show, isLoggedIn, result}) => {
   const [options, setOptions] = useState([]);
   const [selectedName, setSelectedName] = useState(null);
   const [birthYear, setBirthYear] = useState("");
