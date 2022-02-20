@@ -11,7 +11,7 @@ const resolvers = {
   Query: {
     authorCount: () => Author.collection.countDocuments(),
     bookCount: () => Book.collection.countDocuments(),
-    allAuthors: () => Author.find({}),
+    allAuthors: () => Author.find({}).populate("books"),
     allBooks: async (root, args) => {
       if(args.genre !== undefined) {
         return Book.find({ genres: { $in: args.genre } }).populate("author");
@@ -23,7 +23,7 @@ const resolvers = {
     }
   },
   Author: {
-    bookCount: (root) => Book.find({ author: { $in : root } }).countDocuments()
+    bookCount: (root) => root.books.length
   },
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
@@ -69,6 +69,8 @@ const resolvers = {
 
       try {
         await newBook.save();
+        foundAuthor.books = foundAuthor.books.concat(newBook._id);
+        await foundAuthor.save();
       } catch(error) {
         throw new UserInputError(error.message, {
           invalidArgs: args
