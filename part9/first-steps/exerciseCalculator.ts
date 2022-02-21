@@ -8,7 +8,41 @@ interface Result {
   average: number;
 }
 
-const calculateExercises = (dailyExerciseHours: number[], targetAmount: number) : Result => {
+interface InputValuesExercises {
+  dailyExerciseHours: Array<number>;
+  targetAmount: number;
+}
+
+const parseArgumentsExercises = (args: Array<string>): InputValuesExercises => {
+  const argc = args.length;
+  let isValid = true;
+
+  for(let i = 2; i < argc; i++) {
+    if(isNaN(Number(args[i]))) {
+      console.log(args[i]);
+      isValid = false;
+      break;
+    }
+  }
+
+  if(!isValid) {
+    throw new Error("Provided values were not numbers!");
+  }
+
+  let tempDailyExerciseHours = [];
+  let tempTargetAmount = Number(args[2]);
+
+  for(let i = 0; i < argc - 3; i++) {
+    tempDailyExerciseHours[i] = Number(args[i + 3]);
+  }
+
+  return {
+    dailyExerciseHours: tempDailyExerciseHours,
+    targetAmount: tempTargetAmount
+  }
+}
+
+const calculateExercises = (dailyExerciseHours: Array<number>, targetAmount: number) : Result => {
   let tempPeriodLength = dailyExerciseHours.length;
   let tempTrainingDays = 0;
   let tempAverage = 0;
@@ -49,4 +83,13 @@ const calculateExercises = (dailyExerciseHours: number[], targetAmount: number) 
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+try {
+  const { dailyExerciseHours, targetAmount } = parseArgumentsExercises(process.argv);
+  console.log(calculateExercises(dailyExerciseHours, targetAmount));
+} catch(error: unknown) {
+  let errorMessage = "Something bad happened."
+  if (error instanceof Error) {
+    errorMessage += " Error: " + error.message;
+  }
+  console.log(errorMessage);
+}
