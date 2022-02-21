@@ -1,6 +1,5 @@
 const calculateBmi = (height: number, weight: number) : string => {
   const bmi = weight / ((height / 100) ** 2);
-  console.log(bmi);
 
   if(bmi <= 18.4) {
     return "Underweight (unhealthy weight)";
