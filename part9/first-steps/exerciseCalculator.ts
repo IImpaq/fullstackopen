@@ -29,8 +29,8 @@ const parseArgumentsExercises = (args: Array<string>): InputValuesExercises => {
     throw new Error("Provided values were not numbers!");
   }
 
-  let tempDailyExerciseHours = [];
-  let tempTargetAmount = Number(args[2]);
+  const tempDailyExerciseHours = [];
+  const tempTargetAmount = Number(args[2]);
 
   for(let i = 0; i < argc - 3; i++) {
     tempDailyExerciseHours[i] = Number(args[i + 3]);
@@ -39,11 +39,11 @@ const parseArgumentsExercises = (args: Array<string>): InputValuesExercises => {
   return {
     dailyExerciseHours: tempDailyExerciseHours,
     targetAmount: tempTargetAmount
-  }
-}
+  };
+};
 
 const calculateExercises = (dailyExerciseHours: Array<number>, targetAmount: number) : Result => {
-  let tempPeriodLength = dailyExerciseHours.length;
+  const tempPeriodLength = dailyExerciseHours.length;
   let tempTrainingDays = 0;
   let tempAverage = 0;
   let tempRating = 0;
@@ -80,14 +80,14 @@ const calculateExercises = (dailyExerciseHours: Array<number>, targetAmount: num
     ratingDescription: tempRatingDescription,
     target: targetAmount,
     average: tempAverage
-  }
-}
+  };
+};
 
 try {
   const { dailyExerciseHours, targetAmount } = parseArgumentsExercises(process.argv);
   console.log(calculateExercises(dailyExerciseHours, targetAmount));
 } catch(error: unknown) {
-  let errorMessage = "Something bad happened."
+  let errorMessage = "Something bad happened.";
   if (error instanceof Error) {
     errorMessage += " Error: " + error.message;
   }
